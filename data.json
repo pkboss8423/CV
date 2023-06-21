@@ -1,34 +1,238 @@
-[{
-    "id": "00788b4d-2c16-51df-a7fd-fbc41b4d578c",
-    "brickClass": "Chiller",
-    "serialNumber": "4717Q86863",
-    "description": null,
-    "model": "30RB - Air Cooled Chiller Scroll",
-    "modelNumber": "30RBFO7065-L- - - 3",
-    "equipmentFamily": null,
-    "cioTags": null,
-    "productType": null,
-    "picControllerVersion": null,
-    "softwareVersion": null,
-    "isMigrated": false,
-    "isOnline": null,
-    "customer": null,
-    "location": {
-      "id": "7f7b2fe1-7f21-4c00-9683-cdace4f9010b",
-      "salesforceLocationId": "LegacyLocation101",
-      "name": "MindSpace",
-      "street": "1200 1st Ave",
-      "city": "Hyderabad",
-      "state": "Telangana",
-      "zip": "500008",
-      "country": "India",
-      "timezone": "Asia/Calcutta",
-      "latitude": "40.095106",
-      "longitude": "-75.413334"
-    },
-    "connectivityStatus": null,
-    "overallConnectivityStatus": null,
-    "runStatus": null,
-    "name": "233423424",
-    "edge": {"connectivityStatus": null}
-  }]
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+
+interface CalendarProps {
+  year: number;
+  month: number;
+  day: number;
+}
+
+const Calendar: React.FC<CalendarProps> = ({ year, month, day }) => {
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
+
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const handleDatePress = (date: number) => {
+    setSelectedDate(date);
+  };
+
+  const renderCalendar = () => {
+    const daysInMonth = getDaysInMonth(year, month);
+    const calendarDates = Array.from(
+      { length: daysInMonth },
+      (_, index) => index + 1
+    );
+    const days = [
+      {
+        id: 1,
+        day: "Mon"
+      },
+      {
+        id: 2,
+        day: "Tue"
+      },
+      {
+        id: 3,
+        day: "Wed"
+      },
+      {
+        id: 4,
+        day: "Thu"
+      },
+      {
+        id: 5,
+        day: "Fri"
+      },
+      {
+        id: 6,
+        day: "Sat"
+      },
+      {
+        id: 7,
+        day: "Sun"
+      }
+    ];
+    return calendarDates.map((date) => (
+      <TouchableOpacity
+        key={date}
+        style={[
+          styles.dateContainer,
+          date === selectedDate && styles.selectedDateContainer
+        ]}
+        onPress={() => handleDatePress(date)}
+      >
+        <Text
+          style={[
+            styles.dateText,
+            date === selectedDate && styles.selectedDateText
+          ]}
+        >
+          {date}
+        </Text>
+        <Text
+          style={[
+            styles.dateText1,
+            date === selectedDate && styles.selectedDateText
+          ]}
+        >
+          {days[new Date(year, month, date-1).getDay()].day}
+        </Text>
+      </TouchableOpacity>
+    ));
+  };
+
+  return <View style={styles.calendarContainer}>{renderCalendar()}</View>;
+};
+const data = [
+  {
+    id: 0,
+    month: "January"
+  },
+  {
+    id: 1,
+    month: "February"
+  },
+  {
+    id: 2,
+    month: "March"
+  },
+  {
+    id: 3,
+    month: "April"
+  },
+  {
+    id: 4,
+    month: "May"
+  },
+  {
+    id: 5,
+    month: "June"
+  },
+  {
+    id: 6,
+    month: "July"
+  },
+  {
+    id: 7,
+    month: "August"
+  },
+  {
+    id: 8,
+    month: "September"
+  },
+  {
+    id: 9,
+    month: "October"
+  },
+  {
+    id: 10,
+    month: "November"
+  },
+  {
+    id: 11,
+    month: "December"
+  }
+];
+
+const App = () => {
+  const cr = new Date();
+  const [monthNumber, setMonthNumber] = useState(cr.getMonth());
+  const [yearNumber, setYearNumber] = useState(cr.getFullYear());
+  const [day, setDay] = useState(cr.getDate());
+
+  const handleIncPress = () => {
+    setMonthNumber((prev) => prev + 1);
+    if (monthNumber === 11) {
+      setMonthNumber(0);
+      setYearNumber((prev) => prev + 1);
+    }
+  };
+  const handleDecPress = () => {
+    setMonthNumber((prev) => prev - 1);
+    if (monthNumber === 0) {
+      setMonthNumber(11);
+      setYearNumber((prev) => prev - 1);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* {setMonthNumber(cr.getMonth())} */}
+      <View style={styles.container1}>
+        <TouchableOpacity style={styles.container2} onPress={handleDecPress}>
+          <Text>{"<--"}</Text>
+        </TouchableOpacity>
+        <View style={styles.container3}>
+          <Text
+            style={styles.title}
+          >{`${data[monthNumber].month}-${yearNumber}`}</Text>
+        </View>
+        <TouchableOpacity style={styles.container2} onPress={handleIncPress}>
+          <Text>{"-->"}</Text>
+        </TouchableOpacity>
+      </View>
+      <Calendar year={yearNumber} month={monthNumber} day={day} />{" "}
+      {/* Example: June 2023 */}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%"
+  },
+  container1: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-evenly",
+    width: "100%"
+  },
+  container2: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "skyblue",
+    borderRadius: 30,
+    padding: 10
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20
+  },
+  calendarContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center"
+  },
+  dateContainer: {
+    width: 60,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "white",
+    backgroundColor: "#eee"
+  },
+  selectedDateContainer: {
+    backgroundColor: "blue",
+    borderWidth: 1,
+    borderColor: "black"
+  },
+  dateText: {
+    fontSize: 16
+  },
+  dateText1: {
+    fontSize: 10
+  },
+  selectedDateText: {
+    color: "white"
+  }
+});
+
+export default App;
